@@ -5,19 +5,21 @@ import (
 	"errors"
 	"fmt"
 	"miniProject/food"
-	foodstore "miniProject/foodStore"
+	foodstore "miniProject/foodstore"
 	"miniProject/meal"
 	"os"
+
+	"github.com/k0kubun/pp"
 )
 
 func main() {
 
 	foodsDB := foodstore.CreateEmptyStore()
-	meat, err := food.CreateFood("meat", -5)
+	meat, err := food.CreateFood("meat", 150)
 	var ve *food.ValidationError
 	if errors.As(err, &ve) {
 		fmt.Println("плохое поле:", ve.Field, ve.Value)
-
+		return
 	}
 	err = foodsDB.AddFood(meat)
 	if errors.Is(err, foodstore.ErrFoodExists) {
@@ -35,10 +37,18 @@ func main() {
 
 	currentMeal := meal.NewMeal()
 	fmt.Println(currentMeal.GetDay())
-	err = currentMeal.AddFoodByName(foodsDB, "sfddf")
+	err = currentMeal.AddFoodByName(&foodsDB, "sfddf")
 	if errors.Is(err, foodstore.ErrFoodNotFound) {
 		fmt.Println("такой продукт нет в базе")
 	}
+	err = currentMeal.AddFoodByName(&foodsDB, "meat")
+	if errors.Is(err, foodstore.ErrFoodNotFound) {
+		fmt.Println("такой продукт нет в базе")
+	} else {
+		fmt.Println("Успешно добавил")
+	}
+	pp.Println(currentMeal.Foods)
+	pp.Println(foodsDB)
 }
 
 func StartLoop(currentMeal meal.Meal, foodsDB foodstore.FoodStore) {
@@ -62,7 +72,7 @@ func StartLoop(currentMeal meal.Meal, foodsDB foodstore.FoodStore) {
 			break
 		}
 
-		if err := currentMeal.AddFoodByName(foodsDB, text); err != nil {
+		if err := currentMeal.AddFoodByName(&foodsDB, text); err != nil {
 			fmt.Println(err)
 		} else {
 			fmt.Println("New total Kcal:", currentMeal.TotalKcal())

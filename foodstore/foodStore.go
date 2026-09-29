@@ -11,6 +11,11 @@ var (
 	ErrFoodExists   = errors.New("food already exists")
 )
 
+type Store interface {
+	FindFood(name string) (*food.Food, bool)
+	AddFood(food *food.Food) error
+}
+
 type FoodStore struct {
 	store map[string]*food.Food
 }
@@ -36,7 +41,7 @@ func (store *FoodStore) ChangeKcalByName(name string, newKcal float64) {
 	}
 }
 
-func (store *FoodStore) GetFood(name string) (*food.Food, bool) {
+func (store *FoodStore) FindFood(name string) (*food.Food, bool) {
 	if f, ok := store.store[name]; ok {
 		return f, ok
 	}

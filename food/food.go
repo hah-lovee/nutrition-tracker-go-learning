@@ -21,7 +21,7 @@ type Food struct {
 func CreateFood(name string, kcal float64) (*Food, error) {
 	if kcal < 0 {
 		e := &ValidationError{Field: "kcal", Value: kcal}
-		return &Food{}, fmt.Errorf("create food %w", e)
+		return nil, fmt.Errorf("create food %w", e)
 	}
 	return &Food{
 		name: name,

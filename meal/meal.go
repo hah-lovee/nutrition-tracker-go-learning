@@ -3,7 +3,7 @@ package meal
 import (
 	"fmt"
 	"miniProject/food"
-	foodstore "miniProject/foodStore"
+	foodstore "miniProject/foodstore"
 	"time"
 )
 
@@ -49,8 +49,8 @@ func (m *Meal) TotalKcal() float64 {
 	return total
 }
 
-func (m *Meal) AddFoodByName(store foodstore.FoodStore, name string) error {
-	if food, ok := store.GetFood(name); ok {
+func (m *Meal) AddFoodByName(store foodstore.Store, name string) error {
+	if food, ok := store.FindFood(name); ok {
 		m.AddFood(food)
 		return nil
 	}
